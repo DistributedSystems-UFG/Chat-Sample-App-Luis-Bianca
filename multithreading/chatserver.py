@@ -43,9 +43,6 @@ class ClientThread(threading.Thread): # thread to handle the client.
     if dest == "ALL":
       broadcast_message(src, marshaled_msg_pack)
     else:
-      logging.info("dest: " + dest)
-      logging.info("connected_clients: ")
-      logging.info(connected_clients)
       if dest in connected_clients:
         dest_conn = connected_clients[dest]
         dest_conn.send(marshaled_msg_pack)
@@ -66,6 +63,7 @@ connected_clients = {}
 
 while True:
   (conn, addr) = server_sock.accept()
+  logging.info('accept connection')
   client_thread = ClientThread(conn, addr)
   client_thread.start()
   logging.info(client_thread)
