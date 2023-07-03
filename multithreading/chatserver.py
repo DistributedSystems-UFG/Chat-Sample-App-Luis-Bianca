@@ -32,28 +32,28 @@ class ClientThread(threading.Thread): # thread to handle the client.
         dest_conn = connected_clients[dest]
         dest_conn.send(marshaled_msg_pack)
       else:
-        self.conn.send(pickle.dumps("NACK"))
+        self.client_conn.send(pickle.dumps("NACK"))
         logging.error("Client %s: Destination client is down", self.client_addr)
 
-    self.conn.close()
-    remove_client(self.conn)
+    self.client_conn.close()
+    remove_client(self.client_conn)
 
-def broadcast_message(sender, message):
-  logging.info('sending message to all users')
-  for conn in connected_clients.values():
-    if conn != sender:
-      conn.send(message)
+  def broadcast_message(sender, message):
+    logging.info('sending message to all users')
+    for conn in connected_clients.values():
+      if conn != sender:
+        conn.send(message)
 
-def remove_client(conn):
-  logging.info('remove client from connected')
-  username = None
-  for user, client_conn in connected_clients.items():
-    if client_conn == conn:
-      username = user
-      break
+  def remove_client(conn):
+    logging.info('remove client from connected')
+    username = None
+    for user, client_conn in connected_clients.items():
+      if client_conn == conn:
+        username = user
+        break
 
-  if username:
-    del connected_clients[username]
+    if username:
+      del connected_clients[username]
 
 server_sock = socket(AF_INET, SOCK_STREAM)
 server_sock.bind(('0.0.0.0', const.CHAT_SERVER_PORT))
