@@ -49,10 +49,10 @@ class ClientThread(threading.Thread): # thread to handle the client.
       if self.client_conn in connected_clients:
         logging.info('funciona')
       for dest_conn in connected_clients.values():
-        remote_address = str(dest_conn.getpeername()[0])
-        logging.info(remote_address)
+        remote_address = client_conn.getpeername()
+        logging.info(remote_address[0])
         logging.info(dest_addr)
-        if dest_addr in remote_address:
+        if dest_addr in remote_address[0]:
           self.client_conn.send(marshaled_msg_pack)
           break
         else:
