@@ -27,7 +27,8 @@ class ClientThread(threading.Thread): # thread to handle the client.
       broadcast_message(src, marshaled_msg_pack)
     else:
       logging.info("dest: " + dest)
-      logging.info("connected_clients: " + connected_clients)
+      logging.info("connected_clients: ")
+      logging.info(connected_clients)
       if dest in connected_clients:
         dest_conn = connected_clients[dest]
         dest_conn.send(marshaled_msg_pack)
