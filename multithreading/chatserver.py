@@ -70,5 +70,6 @@ while True:
   (conn, addr) = server_sock.accept()
   username = client_thread.name
   connected_clients[username] = conn
+  logging.info(connected_clients)
   client_thread = ClientThread(conn, addr)
   client_thread.start()
