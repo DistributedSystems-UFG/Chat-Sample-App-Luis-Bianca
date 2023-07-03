@@ -2,9 +2,9 @@
 # para "handle" o cliente
 from socket import *
 import pickle
-import const
 import threading
 import logging
+import const
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 

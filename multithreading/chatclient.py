@@ -5,8 +5,8 @@ from socket import *
 import sys
 import pickle
 import threading
-import const
 import logging
+import const
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -42,8 +42,10 @@ def send_message():
     try:
       server_sock.connect((const.CHAT_SERVER_HOST, const.CHAT_SERVER_PORT))
     except:
+      logging.error(const.CHAT_SERVER_HOST)
+      logging.error(const.CHAT_SERVER_PORT)
       print("Server is down. Exiting...")
-      exit(1)
+      sys.exit(1)
 
     msg_pack = (msg, dest, me)
     marshaled_msg_pack = pickle.dumps(msg_pack)
