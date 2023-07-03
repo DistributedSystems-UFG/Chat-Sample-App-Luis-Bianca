@@ -44,15 +44,14 @@ class ClientThread(threading.Thread): # thread to handle the client.
       broadcast_message(src, marshaled_msg_pack)
     else:
       dest_addr = const.registry[dest]
-      logging.info(self.client_conn)
-      logging.info(connected_clients)
-      if self.client_conn in connected_clients:
-        logging.info('funciona')
+      logging.info(self.client_conn) # raddr=('172.31.82.211', 46294)
+      logging.info(connected_clients) # raddr=('172.31.82.211', 46294)
+      logging.info(connected_clients.values()) # raddr=('172.31.82.211', 46294)
       for dest_conn in connected_clients.values():
         remote_address = dest_conn.getpeername()
         logging.info(remote_address[0])
-        logging.info(dest_addr)
-        if dest_addr in remote_address[0]:
+        logging.info(dest_addr[0])
+        if dest_addr[0] == remote_address[0]:
           self.client_conn.send(marshaled_msg_pack)
           break
         else:
