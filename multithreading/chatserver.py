@@ -67,7 +67,8 @@ while True:
   (conn, addr) = server_sock.accept()
   client_thread = ClientThread(conn, addr)
   client_thread.start()
-  username = client_thread.getName()
+  logging.info(client_thread)
+  username = client_thread.name
   logging.info(username)
   connected_clients[username] = conn
   logging.info(connected_clients)
