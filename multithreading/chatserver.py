@@ -46,9 +46,12 @@ class ClientThread(threading.Thread): # thread to handle the client.
       dest_addr = const.registry[dest]
       logging.info(self.client_conn)
       logging.info(connected_clients)
+      if self.client_conn in connected_clients:
+        logging.info('funciona')
       for dest_conn in connected_clients.values():
         remote_address = str(dest_conn.getpeername()[0])
-        logging.info(remote_address + "==" + dest_addr)
+        logging.info(remote_address)
+        logging.info(dest_addr)
         if dest_addr in remote_address:
           self.client_conn.send(marshaled_msg_pack)
           break
