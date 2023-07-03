@@ -49,7 +49,7 @@ class ClientThread(threading.Thread): # thread to handle the client.
       if self.client_conn in connected_clients:
         logging.info('funciona')
       for dest_conn in connected_clients.values():
-        remote_address = client_conn.getpeername()
+        remote_address = dest_conn.getpeername()
         logging.info(remote_address[0])
         logging.info(dest_addr)
         if dest_addr in remote_address[0]:
