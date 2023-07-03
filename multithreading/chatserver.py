@@ -44,9 +44,6 @@ class ClientThread(threading.Thread): # thread to handle the client.
       broadcast_message(src, marshaled_msg_pack)
     else:
       dest_addr = const.registry[dest]
-      logging.info(self.client_conn) # raddr=('172.31.82.211', 46294)
-      logging.info(connected_clients) # raddr=('172.31.82.211', 46294)
-      logging.info(connected_clients.values()) # raddr=('172.31.82.211', 46294)
       for dest_conn in connected_clients.values():
         remote_address = dest_conn.getpeername()
         logging.info(remote_address[0])
@@ -71,7 +68,7 @@ connected_clients = {}
 
 while True:
   (conn, addr) = server_sock.accept()
-  client_thread = ClientThread(conn, addr)
-  client_thread.start()
   username = client_thread.name
   connected_clients[username] = conn
+  client_thread = ClientThread(conn, addr)
+  client_thread.start()
