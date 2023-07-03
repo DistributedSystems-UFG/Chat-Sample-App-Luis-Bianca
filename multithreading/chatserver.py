@@ -44,12 +44,16 @@ class ClientThread(threading.Thread): # thread to handle the client.
       broadcast_message(src, marshaled_msg_pack)
     else:
       dest_addr = const.registry[dest]
+      logging.info(self.client_conn)
+      logging.info(connected_clients)
       for dest_conn in connected_clients.values():
-        if dest_addr in dest_conn.getpeername()[0]:
-          dest_conn.send(marshaled_msg_pack)
+        remote_address = str(dest_conn.getpeername()[0])
+        logging.info(remote_address + "==" + dest_addr)
+        if dest_addr in remote_address:
+          self.client_conn.send(marshaled_msg_pack)
           break
         else:
-          self.dest_conn.send(pickle.dumps("NACK"))
+          self.client_conn.send(pickle.dumps("NACK"))
           logging.error("Client %s: Destination client is down", self.client_addr)          
 
     self.client_conn.close()
@@ -65,12 +69,7 @@ connected_clients = {}
 
 while True:
   (conn, addr) = server_sock.accept()
-  logging.info('accept connection')
   client_thread = ClientThread(conn, addr)
   client_thread.start()
-  logging.info(client_thread)
   username = client_thread.name
-  logging.info(username)
   connected_clients[username] = conn
-  logging.info(connected_clients)
-  logging.info(connected_clients[username])
