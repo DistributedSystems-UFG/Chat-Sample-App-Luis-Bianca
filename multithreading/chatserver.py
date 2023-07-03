@@ -26,6 +26,8 @@ class ClientThread(threading.Thread): # thread to handle the client.
     if dest == "ALL":
       broadcast_message(src, marshaled_msg_pack)
     else:
+      logging.info("dest: " + dest)
+      logging.info("connected_clients: " + connected_clients)
       if dest in connected_clients:
         dest_conn = connected_clients[dest]
         dest_conn.send(marshaled_msg_pack)
@@ -37,11 +39,13 @@ class ClientThread(threading.Thread): # thread to handle the client.
     remove_client(self.conn)
 
 def broadcast_message(sender, message):
+  logging.info('sending message to all users')
   for conn in connected_clients.values():
     if conn != sender:
       conn.send(message)
 
 def remove_client(conn):
+  logging.info('remove client from connected')
   username = None
   for user, client_conn in connected_clients.items():
     if client_conn == conn:
@@ -64,4 +68,7 @@ while True:
   client_thread = ClientThread(conn, addr)
   client_thread.start()
   username = client_thread.getName()
+  logging.info(username)
   connected_clients[username] = conn
+  logging.info(connected_clients)
+  logging.info(connected_clients[username])
