@@ -42,7 +42,6 @@ def remove_client(conn):
 
 class ClientThread(threading.Thread): # thread to handle the client.
   def __init__(self, conn, addr):
-    logging.info("__init__")
     threading.Thread.__init__(self)
     self.client_conn = conn
     self.client_addr = addr
@@ -55,14 +54,13 @@ class ClientThread(threading.Thread): # thread to handle the client.
     dest = msg_pack[1]
     src = msg_pack[2]
     logging.info("RELAYING MSG: " + msg + " - FROM: " + src + " - TO: " + dest)
-    logging.info(msg_pack)
 
     if dest == "ALL":
       dest_addr = const.registry[dest]
-      # for dest_conn in connected_clients.values():
-      #   remote_address = dest_conn.getpeername() # client ip
-      #   if dest_addr[0] == remote_address[0]:
-      #     send_client_message(dest_addr[0], dest_addr[1], (msg, src))
+      for dest_conn in connected_clients.values():
+        remote_address = dest_conn.getpeername() # destination client ip
+        if self.client_addr != remote_address[0]:
+          send_client_message(dest_addr[0], dest_addr[1], (msg, src))
     else:
       dest_addr = const.registry[dest]
       for dest_conn in connected_clients.values():
@@ -70,8 +68,8 @@ class ClientThread(threading.Thread): # thread to handle the client.
         if dest_addr[0] == remote_address[0]:
           send_client_message(dest_addr[0], dest_addr[1], (msg, src))
 
-    # self.client_conn.close()
-    # remove_client(self.client_conn)
+    self.client_conn.close()
+    remove_client(self.client_conn)
 
 server_sock = socket(AF_INET, SOCK_STREAM) # create server socket
 server_sock.bind(('0.0.0.0', const.CHAT_SERVER_PORT))
@@ -80,12 +78,10 @@ server_sock.listen(5)
 logging.info("Chat Server is ready...")
 
 connected_clients = {}
-logging.info(connected_clients)
 
 while True:
   (conn, addr) = server_sock.accept()
   username = conn.getpeername()[0]
   connected_clients[username] = conn
-  logging.info(connected_clients)
   client_thread = ClientThread(conn, addr)
   client_thread.start()
