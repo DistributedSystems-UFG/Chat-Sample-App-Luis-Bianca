@@ -27,6 +27,7 @@ def remove_client(conn):
 
 class ClientThread(threading.Thread): # thread to handle the client.
   def __init__(self, conn, addr):
+    logging.info("__init__")
     threading.Thread.__init__(self)
     self.client_conn = conn
     self.client_addr = addr
@@ -39,6 +40,7 @@ class ClientThread(threading.Thread): # thread to handle the client.
     dest = msg_pack[1]
     src = msg_pack[2]
     logging.info("RELAYING MSG: " + msg + " - FROM: " + src + " - TO: " + dest)
+    logging.info(connected_clients)
 
     if dest == "ALL":
       broadcast_message(src, marshaled_msg_pack)
@@ -58,13 +60,14 @@ class ClientThread(threading.Thread): # thread to handle the client.
     self.client_conn.close()
     remove_client(self.client_conn)
 
-server_sock = socket(AF_INET, SOCK_STREAM)
+server_sock = socket(AF_INET, SOCK_STREAM) # create server socket
 server_sock.bind(('0.0.0.0', const.CHAT_SERVER_PORT))
 server_sock.listen(5)
 
 logging.info("Chat Server is ready...")
 
 connected_clients = {}
+logging.info(connected_clients)
 
 while True:
   (conn, addr) = server_sock.accept()

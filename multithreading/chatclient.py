@@ -37,16 +37,6 @@ def send_message():
   while True:
     dest = input("ENTER DESTINATION: ")
     msg = input("ENTER MESSAGE: ")
-
-    server_sock = socket(AF_INET, SOCK_STREAM)
-    try:
-      server_sock.connect((const.CHAT_SERVER_HOST, const.CHAT_SERVER_PORT))
-    except:
-      logging.error(const.CHAT_SERVER_HOST)
-      logging.error(const.CHAT_SERVER_PORT)
-      print("Server is down. Exiting...")
-      sys.exit(1)
-
     msg_pack = (msg, dest, me)
     marshaled_msg_pack = pickle.dumps(msg_pack)
     server_sock.send(marshaled_msg_pack)
@@ -63,6 +53,14 @@ client_sock = socket(AF_INET, SOCK_STREAM)
 my_port = const.registry[me][1]
 client_sock.bind(('0.0.0.0', my_port))
 client_sock.listen(5)
+
+server_sock = socket(AF_INET, SOCK_STREAM)
+try:
+  server_sock.connect((const.CHAT_SERVER_HOST, const.CHAT_SERVER_PORT))
+except:
+  logging.error(const.CHAT_SERVER_HOST)
+  print("Server is down. Exiting...")
+  sys.exit(1)
 
 logging.info("Chat Client is ready...")
 
