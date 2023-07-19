@@ -56,7 +56,7 @@ class ClientThread(threading.Thread): # thread to handle the client.
     logging.info("RELAYING MSG: " + msg + " - FROM: " + src + " - TO: " + dest)
 
     if dest == "ALL":
-      if connected_clients.len() > 1:
+      if len(connected_clients) > 1:
         conn.send(pickle.dumps("ACK"))
       else:
         conn.send(pickle.dumps("NACK"))
