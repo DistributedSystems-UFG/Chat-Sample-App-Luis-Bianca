@@ -57,9 +57,9 @@ class ClientThread(threading.Thread): # thread to handle the client.
 
     if dest == "ALL":
       if len(connected_clients) > 1:
-        conn.send(pickle.dumps("ACK"))
+        self.client_conn.send(pickle.dumps("ACK"))
       else:
-        conn.send(pickle.dumps("NACK"))
+        self.client_conn.send(pickle.dumps("NACK"))
 
       for dest_conn in connected_clients.values():
         remote_address = dest_conn.getpeername() # destination client
@@ -70,10 +70,9 @@ class ClientThread(threading.Thread): # thread to handle the client.
       try:
         dest_addr = const.registry[dest] # retrieve the destination address
       except:
-        conn.send(pickle.dumps("NACK"))
+        self.client_conn.send(pickle.dumps("NACK"))
       else:
-        conn.send(pickle.dumps("ACK"))
-
+        self.client_conn.send(pickle.dumps("ACK"))
       for dest_conn in connected_clients.values():
         remote_address = dest_conn.getpeername()
         if dest_addr[0] == remote_address[0]:

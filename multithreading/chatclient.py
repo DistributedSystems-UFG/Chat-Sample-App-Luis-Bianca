@@ -20,7 +20,7 @@ class RecvHandler(threading.Thread):
       (conn, addr) = self.client_socket.accept()
       marshaled_msg_pack = conn.recv(1024)
       msg_pack = pickle.loads(marshaled_msg_pack)
-      logging.info("MESSAGE FROM %s: %s n", msg_pack[1], msg_pack[0])
+      logging.info("MESSAGE FROM %s: %s", msg_pack[1], msg_pack[0])
       conn.send(pickle.dumps("ACK"))
       conn.close()
     return
