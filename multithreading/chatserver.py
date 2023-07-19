@@ -56,19 +56,28 @@ class ClientThread(threading.Thread): # thread to handle the client.
     logging.info("RELAYING MSG: " + msg + " - FROM: " + src + " - TO: " + dest)
 
     if dest == "ALL":
+      if connected_clients.len() > 1:
+        conn.send(pickle.dumps("ACK"))
+      else:
+        conn.send(pickle.dumps("NACK"))
+
       for dest_conn in connected_clients.values():
         remote_address = dest_conn.getpeername() # destination client
         if self.client_addr[0] != remote_address[0]:
           dest_port = next((port for name, (ip, port) in const.registry.items() if ip == remote_address[0]), None)
-
           send_client_message(remote_address[0], dest_port, (msg, src))
     else:
-      dest_addr = const.registry[dest]
+      try:
+        dest_addr = const.registry[dest] # retrieve the destination address
+      except:
+        conn.send(pickle.dumps("NACK"))
+      else:
+        conn.send(pickle.dumps("ACK"))
+
       for dest_conn in connected_clients.values():
         remote_address = dest_conn.getpeername()
         if dest_addr[0] == remote_address[0]:
           send_client_message(dest_addr[0], dest_addr[1], (msg, src))
-
     self.client_conn.close()
     remove_client(self.client_conn)
 
