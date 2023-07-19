@@ -56,11 +56,10 @@ class ClientThread(threading.Thread): # thread to handle the client.
     logging.info("RELAYING MSG: " + msg + " - FROM: " + src + " - TO: " + dest)
 
     if dest == "ALL":
-      dest_addr = const.registry[dest]
       for dest_conn in connected_clients.values():
         remote_address = dest_conn.getpeername() # destination client ip
         if self.client_addr != remote_address[0]:
-          send_client_message(dest_addr[0], dest_addr[1], (msg, src))
+          send_client_message(remote_address[0], remote_address[1], (msg, src))
     else:
       dest_addr = const.registry[dest]
       for dest_conn in connected_clients.values():
