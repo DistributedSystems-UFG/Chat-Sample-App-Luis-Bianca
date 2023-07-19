@@ -59,8 +59,9 @@ class ClientThread(threading.Thread): # thread to handle the client.
       for dest_conn in connected_clients.values():
         remote_address = dest_conn.getpeername() # destination client
         if self.client_addr[0] != remote_address[0]:
-          dest_addr = {name: (ip, port) for name, (ip, port) in const.registry.items() if ip == remote_address[0]}
-          send_client_message(dest_addr[0], dest_addr[1], (msg, src))
+          dest_port = next((port for name, (ip, port) in const.registry.items() if ip == remote_address[0]), None)
+
+          send_client_message(remote_address[0], dest_port, (msg, src))
     else:
       dest_addr = const.registry[dest]
       for dest_conn in connected_clients.values():
