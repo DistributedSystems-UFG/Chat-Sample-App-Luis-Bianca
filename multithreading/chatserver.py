@@ -52,10 +52,6 @@ class ClientThread(threading.Thread): # thread to handle the client.
         logging.info(dest_addr[0])
         if dest_addr[0] == remote_address[0]:
           self.client_conn.send(marshaled_msg_pack)
-          break
-        else:
-          self.client_conn.send(pickle.dumps("NACK"))
-          logging.error("Client %s: Destination client is down", self.client_addr)          
 
     self.client_conn.close()
     remove_client(self.client_conn)
