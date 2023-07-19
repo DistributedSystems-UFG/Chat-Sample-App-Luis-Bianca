@@ -77,8 +77,6 @@ class ClientThread(threading.Thread): # thread to handle the client.
         remote_address = dest_conn.getpeername()
         if dest_addr[0] == remote_address[0]:
           send_client_message(dest_addr[0], dest_addr[1], (msg, src))
-    self.client_conn.close()
-    remove_client(self.client_conn)
 
 server_sock = socket(AF_INET, SOCK_STREAM) # create server socket
 server_sock.bind(('0.0.0.0', const.CHAT_SERVER_PORT))
