@@ -8,11 +8,26 @@ import const
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def broadcast_message(sender, message):
-  logging.info('sending message to all users')
-  for conn in connected_clients.values():
-    if conn != sender:
-      conn.send(message)
+def send_client_message(dest_ip, dest_port, msg_pack):
+  logging.info('sending message')
+  client_sock = socket(AF_INET, SOCK_STREAM) # socket for connecting to the destination client
+
+  try:
+    client_sock.connect((dest_ip, dest_port))
+  except:
+    print ("Error: Destination client is down")
+
+  marshaled_msg_pack = pickle.dumps(msg_pack)  # serialize message pack
+  client_sock.send(marshaled_msg_pack)  # send to the destination client
+
+  marshaled_reply = client_sock.recv(1024)  # serialized reply from the destination client
+  reply = pickle.loads(marshaled_reply)  # deserialize reply
+
+  if reply != "ACK":
+    print("Error: Destination client did not receive message properly")
+  else:
+    pass
+  client_sock.close()
 
 def remove_client(conn):
   logging.info('remove client from connected')
@@ -40,21 +55,23 @@ class ClientThread(threading.Thread): # thread to handle the client.
     dest = msg_pack[1]
     src = msg_pack[2]
     logging.info("RELAYING MSG: " + msg + " - FROM: " + src + " - TO: " + dest)
-    logging.info(connected_clients)
+    logging.info(msg_pack)
 
     if dest == "ALL":
-      broadcast_message(src, marshaled_msg_pack)
+      dest_addr = const.registry[dest]
+      # for dest_conn in connected_clients.values():
+      #   remote_address = dest_conn.getpeername() # client ip
+      #   if dest_addr[0] == remote_address[0]:
+      #     send_client_message(dest_addr[0], dest_addr[1], (msg, src))
     else:
       dest_addr = const.registry[dest]
       for dest_conn in connected_clients.values():
         remote_address = dest_conn.getpeername()
-        logging.info(remote_address[0])
-        logging.info(dest_addr[0])
         if dest_addr[0] == remote_address[0]:
-          self.client_conn.send(marshaled_msg_pack)
+          send_client_message(dest_addr[0], dest_addr[1], (msg, src))
 
-    self.client_conn.close()
-    remove_client(self.client_conn)
+    # self.client_conn.close()
+    # remove_client(self.client_conn)
 
 server_sock = socket(AF_INET, SOCK_STREAM) # create server socket
 server_sock.bind(('0.0.0.0', const.CHAT_SERVER_PORT))
